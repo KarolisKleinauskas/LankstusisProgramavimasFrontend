@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, ScrollView, StyleSheet, Text, View, Pressable, ImageBackground, TouchableOpacity, Objects } from 'react-native';
-import React, {useState, useCallback} from 'react';
+import { Button, ScrollView, StyleSheet, Text, View, Pressable, ImageBackground, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -17,7 +17,7 @@ function HomeScreen({ navigation }) {
           </Pressable>
         </View>
         <View style={styles.titleBlock}>
-        <Text style={styles.title}>TAVO POREIKIAI - MŪSŲ PASIŪLYMAI</Text>
+          <Text style={styles.title}>TAVO POREIKIAI - MŪSŲ PASIŪLYMAI</Text>
           <Text style={styles.text1}>Produktų Informacijos Gavimo Programa (?)</Text>
         </View>
         <View style={styles.buttonNext}>
@@ -192,29 +192,106 @@ function ProductInfo({route, navigation}) {
   );
 }
 
- function HelpScreen() {
-     return (
-       <ImageBackground source={require('./assets/background.jpeg')} style={styles.background}>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-         <View style={styles.container}>
-           <Text style={styles.helpTitle}>Kam reikalinga šį programa?</Text>
-           <Text style={styles.helpText}>Ši programa leidžia vartotojui surasti jam tinkamą išmaniūjų namų sistemą.....</Text>
-           <Text style={styles.helpTitle}>Kaip naudotis programa?</Text>
-           <Text style={styles.helpText}>1. Pradinio lango apačioje matomas mygtukas 'tęsti', kurį paspaudus jūs busite nuvedamas į klausimyną. </Text>
-           <Text style={styles.helpText}>2. Klausimyno lange jums reikia pasirinkti kūrią kategoriją norite pasirinkti.</Text>
-           <Text style={styles.helpText}>3. Pasirinkę kategoriją ir paspaudę mygtuką tęsti, jums bus rodoma produkto išsami informacija.</Text>
-           <Text style={styles.helpText}>4. Viršui kairėje paspaudūs mygtuką su atbuline rodykle, jūs būsite gražinamas į praeitą langą. </Text>
-           <Text style={styles.helpTitle}>Kas dare šią programą?</Text>
-           <Text style={styles.helpText}>Šia programą darė keturi Klaipėdos valstybinės kolegijos antro kurso informatikos studentai, kurie turėjo savo pareigas ir atsakomybes:</Text>
-           <Text style={styles.helpText}>Tomas Budrikas - Fullstack</Text>
-           <Text style={styles.helpText}>Meida Ivanauskaitė - Frontend</Text>
-           <Text style={styles.helpText}>Lukas Raišuotis - Backend</Text>
+function HelpScreen({ navigation }) {
+  return (
+    <ImageBackground source={require('./assets/background.jpeg')} style={styles.background}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <Text style={styles.helpTitle}>Kam reikalinga ši programa?</Text>
+          <Text style={styles.helpText}>Ši programa leidžia vartotojui surasti jam tinkamą išmaniūjų namų sistemą.....</Text>
+          <Text style={styles.helpTitle}>Kaip naudotis programa?</Text>
+          <Text style={styles.helpText}>1. Pradinio lango apačioje matomas mygtukas 'tęsti', kurį paspaudus jūs busite nuvedamas į klausimyną. </Text>
+          <Text style={styles.helpText}>2. Klausimyno lange jums reikia pasirinkti kūrią kategoriją norite pasirinkti.</Text>
+          <Text style={styles.helpText}>3. Pasirinkę kategoriją ir paspaudę mygtuką tęsti, jums bus rodoma produkto išsami informacija.</Text>
+          <Text style={styles.helpText}>4. Viršui kairėje paspaudūs mygtuką su atbuline rodykle, jūs būsite gražinamas į praeitą langą. </Text>
+          <Text style={styles.helpTitle}>Kas dare šią programą?</Text>
+          <Text style={styles.helpText}>Šia programą darė keturi Klaipėdos valstybinės kolegijos antro kurso informatikos studentai, kurie turėjo savo pareigas ir atsakomybes:</Text>
+          <Text style={styles.helpText}>Tomas Budrikas - Fullstack</Text>
+          <Text style={styles.helpText}>Meida Ivanauskaitė - Frontend</Text>
+          <Text style={styles.helpText}>Lukas Raišuotis - Backend</Text>
           <Text style={styles.helpText}>Karolis Kleinauskas - Duomenų bazės</Text>
-         </View>
-         </ScrollView>
-       </ImageBackground>
-     );
-   }
+
+          {/* Feedback Button */}
+          <TouchableOpacity style={styles.feedbackButton} onPress={() => navigation.navigate('Feedback')}>
+            <Text style={styles.feedbackButtonText}>Feedback</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </ImageBackground>
+  );
+}
+
+function FeedbackScreen({ navigation }) {
+  const [rating, setRating] = useState(0);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+
+  const handleSubmit = () => {
+    // Handle submit logic, e.g., sending feedback to server
+    console.log('Rating:', rating);
+    console.log('Feedback Text:', feedbackText);
+
+    // Show the modal
+    setShowModal(true);
+  };
+
+  const handleContinue = () => {
+    // Hide the modal
+    setShowModal(false);
+
+    // Navigate to the Home screen
+    navigation.navigate('Home');
+  };
+
+  return (
+    <ImageBackground source={require('./assets/background.jpeg')} style={styles.background}>
+      <View style={styles.container}>
+        <Text style={styles.feedbackTitle}>Atsiliepimai</Text>
+
+        {/* Rating */}
+        <Text style={styles.label}>Įvertinkite savo patirtį (1-5)</Text>
+        <View style={styles.ratingContainer}>
+          {[1, 2, 3, 4, 5].map((value) => (
+            <TouchableOpacity
+              key={value}
+              style={[styles.ratingItem, value <= rating && styles.selectedRatingItem]}
+              onPress={() => setRating(value)}>
+              <Text style={styles.ratingText}>{value}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Feedback Text */}
+        <Text style={styles.label}>Padėkite mums tobulėti</Text>
+        <TextInput
+          style={styles.feedbackTextInput}
+          multiline
+          numberOfLines={4}
+          placeholder="Jūsų atsiliepimas"
+          value={feedbackText}
+          onChangeText={(text) => setFeedbackText(text)}
+        />
+
+        {/* Submit Button */}
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Siūsti</Text>
+        </TouchableOpacity>
+
+        {/* Modal */}
+        {showModal && (
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>Ačiū už atsiliepimą!</Text>
+              <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+                <Text style={styles.continueButtonText}>Tęsti</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      </View>
+    </ImageBackground>
+  );
+}
 
 function App() {
   return (
@@ -225,6 +302,7 @@ function App() {
         <Stack.Screen name="List" component={ItemList}/>
         <Stack.Screen name="Product" component={ProductInfo}/>
         <Stack.Screen name="Help" component={HelpScreen}/>
+        <Stack.Screen name="Feedback" component={FeedbackScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -238,6 +316,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    marginBottom: 10, // Adjust this value as needed to create the desired gap
+    paddingBottom: 20, // Additional padding to ensure content is not too close to the bottom
   },
   background: {
     flex: 1,
@@ -383,9 +463,97 @@ const styles = StyleSheet.create({
     color: 'white',
     top: 10
   },
+  feedbackTitle: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    color: '#fff',
+    alignSelf: 'flex-start',
+    marginLeft: 20,
+    marginBottom: 5,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  ratingItem: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    marginHorizontal: 5,
+  },
+  selectedRatingItem: {
+    backgroundColor: '#6699FF',
+  },
+  ratingText: {
+    fontSize: 16,
+    color: '#6699FF',
+  },
+  feedbackTextInput: {
+    width: '80%',
+    height: 120,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 20,
+  },
+  submitButton: {
+    backgroundColor: '#6699FF',
+    width: '80%',
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  feedbackButton: {
+    backgroundColor: '#6699FF',
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 20,
+    alignSelf: 'center',
+  },
+  feedbackButtonText: {
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  continueButton: {
+    backgroundColor: '#6699FF',
+    padding: 10,
+    borderRadius: 5,
+  },
+  continueButtonText: {
+    fontSize: 16,
+    color: '#fff',
+  },
 });
 
 // cd .../LankstusisProgramavimasFrontend
 // npm install (node_modules)
 // npm run start (qr code)
 // npm run android (qr code + paleidimas per android pc)
+
